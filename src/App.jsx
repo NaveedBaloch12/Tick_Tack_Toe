@@ -98,7 +98,7 @@ function App() {
           {
             isGameOver && (
               <h1>
-                Game Over! <strong>{winner}</strong> Won!
+                Game Over! <strong>{winner}</strong>!
               </h1>
             )
             || (
