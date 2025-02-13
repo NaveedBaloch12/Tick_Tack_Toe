@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import "./App.css";
-import Button from "./Button";
+import GameLogic from "./gamelogic";
 
 function App() {
   const [GameArr, setGameArr] = useState([
@@ -9,6 +9,10 @@ function App() {
     ["", "", ""],
   ]);
   const [isPlayerXTurn, setIsPlayerXTurn] = useState(true); // true = Player X, false = Player O
+  const [currentPlayer, setcurrentPlayer] = useState("1st Player")
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [winner, setWinner] = useState("");
+
 
   // GameButton Cilck Handler
   const ButtonClickHandler = (row, col) => {
@@ -22,9 +26,25 @@ function App() {
     //Toggle Player
     toggleplayer();
 
-    // Check if any player win
-
   };
+
+  useEffect(() => {
+    GameLogic(GameArr, setIsGameOver, setWinner);
+  }, [GameArr]); 
+
+  // Reset the game 
+  const ResetGameHandler = () =>
+  {
+    setGameArr([
+      ["", "", ""],
+      ["", "", ""],
+      ["", "", ""],
+    ]);
+    setIsPlayerXTurn(true);
+    setcurrentPlayer("1st Player");
+    setIsGameOver(false);
+    setWinner("");
+  }
 
   const toggleplayer = () =>
   {
@@ -32,22 +52,24 @@ function App() {
     if(isPlayerXTurn)
     {
       setIsPlayerXTurn(false);
+      setcurrentPlayer("2nd Player");
     }
     else
     {
       setIsPlayerXTurn(true);
+      setcurrentPlayer("1st Player");
     }
   }
 
   return (
     <div className="container mt-3">
       <h1 className="text-center">Welcome to Tick Tack Toe Game!</h1>
-      <div className="Card p-2">
+      <div className="Card p-2 mt-3">
         <div className="GameBoard">
           <div className="row">
             {GameArr[0].map((value, index) => (
               <div key={index} className="col m-0 p-0">
-                <button className="btn GameButton" type="button" onClick={() => ButtonClickHandler(index, 0)}>
+                <button className="btn GameButton" type="button" disabled={value !==""} onClick={() => ButtonClickHandler(index, 0)}>
                   {value}
                 </button>
               </div>
@@ -56,7 +78,7 @@ function App() {
           <div className="row">
             {GameArr[1].map((value, index) => (
               <div key={index} className="col m-0 p-0">
-                <button key={index} className="btn GameButton" type="button" onClick={() => ButtonClickHandler(index, 1)}>
+                <button className="btn GameButton" type="button" disabled={value !==""} onClick={() => ButtonClickHandler(index, 1)}>
                   {value}
                 </button>
               </div>
@@ -65,12 +87,25 @@ function App() {
           <div className="row">
             {GameArr[2].map((value, index) => (
               <div key={index} className="col m-0 p-0">
-                <button key={index} className="btn GameButton" type="button" onClick={() => ButtonClickHandler(index, 2)}>
+                <button className="btn GameButton" type="button" disabled={value !==""} onClick={() => ButtonClickHandler(index, 2)}>
                   {value}
                 </button>
               </div>
             ))}
           </div>
+        </div>
+        <div className="text-center mt-3">
+          {
+            isGameOver && (
+              <h1>
+                Game Over! <strong>{winner}</strong> Won!
+              </h1>
+            )
+            || (
+              <h3>Current Player: {currentPlayer}</h3>
+            )
+          }
+          <button className="btn btn-primary" onClick={ResetGameHandler}> Reset Game </button>
         </div>
       </div>
     </div>
